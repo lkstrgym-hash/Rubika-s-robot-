@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rubika Bot Builder</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @font-face {
+            font-family: 'Inter';
+            src: url('https://fonts.gstatic.com/s/inter/v13/UcCO3FZYKAGTFlEbyhZtM4E.woff2') format('woff2');
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        /* Custom scrollbar for the code area */
+        .code-area::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        .code-area::-webkit-scrollbar-thumb {
+            background-color: #d1d5db;
+            border-radius: 10px;
+        }
+        .code-area::-webkit-scrollbar-track {
+            background-color: #f9fafb;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8">
+
+    <div class="max-w-4xl mx-auto bg-white shadow-2xl rounded-xl p-6 md:p-10 border-t-4 border-indigo-600">
+        <h1 class="text-3xl font-extrabold text-indigo-700 mb-2">ربات ساز روبیکا 🤖</h1>
+        <p class="text-gray-600 mb-6">توکن ربات خود را وارد کنید و فرمان‌های متنی و دکمه‌ای را تعریف نمایید.</p>
+
+        <!-- Prerequisite Instruction (جدید) -->
+        <div class="mb-8 p-4 bg-red-50 rounded-lg border border-red-300 shadow-md">
+            <p class="text-lg font-bold text-red-700 mb-2 flex items-center">
+                <svg class="w-6 h-6 ml-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.332 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                🔴 نکته مهم: نصب پیش‌نیاز
+            </p>
+            <p class="text-gray-700">برای اجرای کد پایتون نهایی، باید کتابخانه <code class="bg-red-100 px-1 py-0.5 rounded text-red-800 font-semibold">requests</code> را در محیط پایتون خود نصب کنید. دستور زیر را در **ترمینال** یا **CMD** وارد نمایید:</p>
+            <div class="mt-3 bg-gray-900 p-3 rounded-lg text-left text-base font-mono overflow-x-auto shadow-inner">
+                <span class="text-green-400">pip install requests</span>
+            </div>
+        </div>
+        
+        <!-- 1. Token Input -->
+        <div class="mb-8 p-4 bg-indigo-50 rounded-lg border border-indigo-200">
+            <label for="tokenInput" class="block text-lg font-bold text-indigo-700 mb-2">توکن ربات روبیکا</label>
+            <input type="text" id="tokenInput" placeholder="توکن خود را اینجا وارد کنید (مثال: e1f...)"
+                   class="w-full px-4 py-3 border border-indigo-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150 text-left"
+                   dir="ltr">
+        </div>
+
+        <!-- 2. Text Commands -->
+        <div class="mb-8 p-6 bg-gray-50 rounded-xl border border-gray-200">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex justify-between items-center">
+                فرمان‌های متنی (مثال: سلام، چه خبر)
+                <button onclick="addTextCommand()" class="bg-green-500 hover:bg-green-600 text-white font-semibold py-1 px-3 rounded-full text-sm transition shadow-md">
+                    + اضافه کردن فرمان
+                </button>
+            </h2>
+            <div id="textCommandsContainer" class="space-y-4">
+                <!-- Initial example commands -->
+                <div class="flex flex-col sm:flex-row gap-2 bg-white p-3 rounded-lg shadow-sm">
+                    <input type="text" placeholder="متن ورودی (مثلا: سلام)" value="سلام" class="flex-1 px-3 py-2 border rounded-lg">
+                    <input type="text" placeholder="پاسخ ربات (مثلا: سلام دوست من!)" value="سلام دوست عزیز! حالت چطوره؟" class="flex-1 px-3 py-2 border rounded-lg">
+                    <button onclick="removeCommand(this)" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-3 rounded-lg text-sm transition">حذف</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Button Commands -->
+        <div class="mb-8 p-6 bg-gray-50 rounded-xl border border-gray-200">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex justify-between items-center">
+                دکمه‌های کیبورد (ارسال با فرمان /start)
+                <button onclick="addButtonCommand()" class="bg-green-500 hover:bg-green-600 text-white font-semibold py-1 px-3 rounded-full text-sm transition shadow-md">
+                    + اضافه کردن دکمه
+                </button>
+            </h2>
+            <p class="text-sm text-gray-500 mb-4">با ارسال فرمان **`/start`**، این دکمه‌ها برای کاربر نمایش داده می‌شوند. هر دکمه، متن خود را به‌عنوان یک پیام به ربات ارسال می‌کند و پاسخ آن از طریق "پاسخ ربات" ارسال می‌شود.</p>
+            <div id="buttonCommandsContainer" class="space-y-4">
+                <!-- Initial example button -->
+                <div class="flex flex-col sm:flex-row gap-2 bg-white p-3 rounded-lg shadow-sm">
+                    <input type="text" placeholder="متن دکمه (مثلا: درباره ما)" value="درباره ما" class="flex-1 px-3 py-2 border rounded-lg">
+                    <input type="text" placeholder="پاسخ ربات به کلیک دکمه" value="من یک ربات هستم که برای کمک به شما طراحی شده‌ام." class="flex-1 px-3 py-2 border rounded-lg">
+                    <button onclick="removeCommand(this)" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-3 rounded-lg text-sm transition">حذف</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Generator and Output -->
+        <div class="text-center mb-6">
+            <button onclick="generateCode()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xl font-bold py-3 px-8 rounded-xl shadow-lg transition duration-300 transform hover:scale-105">
+                تولید کد پایتون
+            </button>
+        </div>
+
+        <div class="mt-8">
+            <div class="flex justify-between items-center mb-3">
+                <h2 class="text-xl font-bold text-gray-800">کد پایتون نهایی</h2>
+                <button id="copyButton" onclick="copyCode()" class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-1 px-3 rounded-lg transition shadow-md" style="display: none;">
+                    کپی کد
+                </button>
+            </div>
+            <textarea id="outputCode" rows="15" readonly placeholder="کد پایتون تولید شده در اینجا نمایش داده می‌شود..."
+                      class="code-area w-full p-4 border-2 border-gray-300 rounded-xl bg-gray-900 text-green-300 text-sm overflow-auto text-left"
+                      dir="ltr"></textarea>
+        </div>
+
+    </div>
+
+    <script>
+        const textCommandsContainer = document.getElementById('textCommandsContainer');
+        const buttonCommandsContainer = document.getElementById('buttonCommandsContainer');
+        const outputCode = document.getElementById('outputCode');
+        const tokenInput = document.getElementById('tokenInput');
+        const copyButton = document.getElementById('copyButton');
+
+        // --- Utility Functions for UI ---
+
+        let buttonIdCounter = 100;
+
+        /** Creates and returns a new command row element. */
+        function createCommandRow(placeholder1, placeholder2, initialValue1 = '', initialValue2 = '') {
+            const div = document.createElement('div');
+            div.className = 'flex flex-col sm:flex-row gap-2 bg-white p-3 rounded-lg shadow-sm';
+            div.innerHTML = `
+                <input type="text" placeholder="${placeholder1}" value="${initialValue1}" class="flex-1 px-3 py-2 border rounded-lg">
+                <input type="text" placeholder="${placeholder2}" value="${initialValue2}" class="flex-1 px-3 py-2 border rounded-lg">
+                <button onclick="removeCommand(this)" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-3 rounded-lg text-sm transition flex-shrink-0">حذف</button>
+            `;
+            return div;
+        }
+
+        /** Adds a row to the Text Commands section. */
+        function addTextCommand() {
+            const row = createCommandRow('متن ورودی (مثلا: سلام)', 'پاسخ ربات (مثلا: سلام دوست من!)');
+            textCommandsContainer.appendChild(row);
+        }
+
+        /** Adds a row to the Button Commands section. */
+        function addButtonCommand() {
+            const row = createCommandRow('متن دکمه (مثلا: ثبت سفارش)', 'پاسخ ربات به کلیک دکمه');
+            buttonCommandsContainer.appendChild(row);
+        }
+
+        /** Removes the parent row of the clicked button. */
+        function removeCommand(button) {
+            button.closest('.flex').remove();
+        }
+
+        // Initialize with default commands if containers are empty (for testing)
+        if (textCommandsContainer.children.length === 0) {
+            addTextCommand();
+        }
+        if (buttonCommandsContainer.children.length === 0) {
+            addButtonCommand();
+        }
+
+
+        // --- Code Generation Logic ---
+
+        /** Generates the Python code string. */
+        function generatePythonCode(token) {
+            const textCommands = [];
+            textCommandsContainer.querySelectorAll('.flex').forEach(row => {
+                const inputs = row.querySelectorAll('input');
+                const input = inputs[0].value.trim();
+                const response = inputs[1].value.trim();
+                if (input && response) {
+                    textCommands.push({ input: input.toLowerCase(), response });
+                }
+            });
+
+            const buttonCommands = [];
+            buttonCommandsContainer.querySelectorAll('.flex').forEach(row => {
+                const inputs = row.querySelectorAll('input');
+                const text = inputs[0].value.trim();
+                const response = inputs[1].value.trim();
+                if (text && response) {
+                    buttonCommands.push({ text, response });
+                }
+            });
+
+            // Combine text and button responses into one dict
+            const allResponses = {};
+            textCommands.forEach(cmd => {
+                allResponses[cmd.input] = cmd.response;
+            });
+            buttonCommands.forEach(cmd => {
+                // Button text acts as the command key
+                allResponses[cmd.text.toLowerCase()] = cmd.response;
+            });
+
+            // Format KNOWN_RESPONSES string for Python
+            let responsesCode = '';
+            for (const [key, value] of Object.entries(allResponses)) {
+                // Escape quotes in values for Python string literal
+                const safeValue = value.replace(/"/g, '\\"');
+                responsesCode += `\t"${key}": "${safeValue}",\n`;
+            }
+
+            // Format Keypad structure for Python
+            let keypadRowsCode = '';
+            buttonIdCounter = 100; // Reset counter
+            if (buttonCommands.length > 0) {
+                // Group buttons into rows of 1 or 2 for simple demonstration
+                const rows = [];
+                for (let i = 0; i < buttonCommands.length; i += 2) {
+                    const rowButtons = buttonCommands.slice(i, i + 2);
+                    rows.push(rowButtons);
+                }
+
+                keypadRowsCode = JSON.stringify(rows.map(row => {
+                    return {
+                        "buttons": row.map(btn => {
+                            const btnObj = {
+                                "id": String(buttonIdCounter++),
+                                "type": "Simple",
+                                "button_text": btn.text
+                            };
+                            return btnObj;
+                        })
+                    };
+                }), null, 4).slice(1, -1).trim(); // Remove outer [ and ]
+            }
+
+
+            const pythonCode = `
+# توجه: برای اجرای این کد، باید کتابخانه requests را نصب کنید: pip install requests
+import requests
+import time
+import random
+import os
+import json
+from datetime import datetime
+
+# --- تنظیمات ---
+TOKEN = "${token}"  # توکن ربات خود را اینجا وارد کنید
+BASE_URL = f"https://botapi.rubika.ir/v3/{TOKEN}"
+OFFSET_FILE = "offset.txt"
+LOG_FILE = "messages.txt"
+
+# پاسخ‌های تصادفی
+RANDOM_RESPONSES = ["اها", "عجب", "بله", "اوم", "ممنون"]
+
+# پاسخ‌های تعریف شده توسط کاربر (متن‌ها و دکمه‌ها)
+# توجه: تمام متن‌ها برای مقایسه به حروف کوچک تبدیل می‌شوند.
+KNOWN_RESPONSES = {
+${responsesCode}\
+}
+
+# --- بخش کیبورد ---
+def get_keypad_data():
+    """ساخت ساختار JSON کیبورد برای ارسال."""
+    keypad_data = {
+        "chat_keypad_type": "New",
+        "chat_keypad": {
+            "rows": [
+${keypadRowsCode}
+            ],
+            "resize_keyboard": True,
+            "on_time_keyboard": False
+        }
+    }
+    return keypad_data
+
+# --- توابع اصلی API ---
+
+# بارگذاری offset از فایل
+if os.path.exists(OFFSET_FILE):
+    with open(OFFSET_FILE, "r") as f:
+        offset_id = f.read().strip()
+else:
+    offset_id = None
+
+def save_offset(offset):
+    with open(OFFSET_FILE, "w") as f:
+        f.write(str(offset))
+
+def log_message(chat_id, text):
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    with open(LOG_FILE, "a", encoding="utf-8") as f:
+        if chat_id:
+            f.write(f"[{timestamp}] | {chat_id} | {text}\\n")
+        else:
+            f.write(f"[{timestamp}] | UNKNOWN | {text}\\n")
+
+def get_updates(limit=20, offset=None):
+    """دریافت به‌روزرسانی‌های جدید از سرور روبیکا."""
+    try:
+        data = {"limit": limit}
+        if offset:
+            data["offset_id"] = offset
+        resp = requests.post(f"{BASE_URL}/getUpdates", json=data, timeout=70)
+        result = resp.json()
+        updates = result.get("data", {}).get("updates", [])
+        next_offset = result.get("data", {}).get("next_offset_id")
+        return updates, next_offset
+    except Exception as e:
+        print(f"خطا در دریافت آپدیت: {e}")
+        return [], None
+
+def send_message(chat_id, text, keypad_data=None):
+    """ارسال پیام به چت مشخص شده."""
+    try:
+        payload = {"chat_id": chat_id, "text": text}
+        if keypad_data:
+            # ترکیب داده‌های کیبورد با payload
+            payload.update(keypad_data)
+
+        resp = requests.post(f"{BASE_URL}/sendMessage", json=payload, timeout=15)
+        if resp.status_code != 200:
+            print(f"خطا در ارسال پیام: {resp.text}")
+    except Exception as e:
+        print(f"خطا در ارسال پیام: {e}")
+
+# --- تابع اصلی ---
+
+def main():
+    global offset_id
+    print("ربات فعال شد! در حال گوش دادن به پیام‌ها...")
+
+    while True:
+        updates, next_offset = get_updates(offset=offset_id)
+        if not updates:
+            time.sleep(1)
+            continue
+
+        for u in updates:
+            chat_id, text = None, None
+
+            # تشخیص پیام متنی (نوع NewMessage)
+            if u.get("type") == "NewMessage":
+                chat_id = u.get("chat_id")
+                text = u.get("new_message", {}).get("text", "")
+            # تشخیص پیام‌های دکمه‌ای (در صورت وجود inline_message) - اگرچه در API شما نیامده، برای جلوگیری از خطا اضافه شده است.
+            elif "inline_message" in u:
+                im = u["inline_message"]
+                chat_id = im.get("chat_id")
+                text = im.get("text", "")
+
+            if text and chat_id:
+                # ذخیره پیام در فایل
+                log_message(chat_id, text)
+
+                # نمایش در کنسول
+                print(f"پیام جدید از {chat_id}: {text}")
+
+                # پردازش و پاسخ به پیام
+                key = text.lower().strip()
+
+                if key == "/start":
+                    # ارسال پیام خوش آمدگویی به همراه کیبورد
+                    send_message(chat_id, "سلام! به ربات خوش آمدید. لطفا یک گزینه را انتخاب کنید.", keypad_data=get_keypad_data())
+                elif key in KNOWN_RESPONSES:
+                    # پاسخ به فرمان متنی یا کلیک دکمه (که متن دکمه را ارسال می‌کند)
+                    send_message(chat_id, KNOWN_RESPONSES[key])
+                else:
+                    # پاسخ تصادفی برای پیام‌های ناشناخته
+                    send_message(chat_id, random.choice(RANDOM_RESPONSES))
+
+
+        # به‌روزرسانی offset و ذخیره روی دیسک
+        if next_offset:
+            offset_id = next_offset
+            save_offset(offset_id)
+
+        time.sleep(1)
+
+if __name__ == "__main__":
+    main()
+`;
+            return pythonCode.trim();
+        }
+
+        /** Main function to trigger code generation and UI update. */
+        function generateCode() {
+            const token = tokenInput.value.trim();
+            if (!token) {
+                outputCode.value = 'لطفا توکن ربات خود را وارد کنید.';
+                copyButton.style.display = 'none';
+                return;
+            }
+
+            const code = generatePythonCode(token);
+            outputCode.value = code;
+            copyButton.style.display = 'inline-block';
+        }
+
+        /** Copies the generated code to the clipboard. */
+        function copyCode() {
+            outputCode.select();
+            outputCode.setSelectionRange(0, 99999); // For mobile devices
+
+            // Use document.execCommand('copy') for compatibility in iframe environments
+            try {
+                const successful = document.execCommand('copy');
+                const msg = successful ? 'کد با موفقیت کپی شد!' : 'عملیات کپی شکست خورد.';
+                
+                // Simple visual feedback
+                const originalText = copyButton.innerText;
+                copyButton.innerText = 'کپی شد!';
+                copyButton.classList.remove('bg-yellow-500', 'hover:bg-yellow-600');
+                copyButton.classList.add('bg-green-500', 'hover:bg-green-600');
+                
+                setTimeout(() => {
+                    copyButton.innerText = originalText;
+                    copyButton.classList.remove('bg-green-500', 'hover:bg-green-600');
+                    copyButton.classList.add('bg-yellow-500', 'hover:bg-yellow-600');
+                }, 2000);
+            } catch (err) {
+                console.error('Fallback: Could not copy text: ', err);
+                // Display custom message box instead of alert
+                // (Since custom message box logic is not provided, we stick to the required document.execCommand logic)
+            }
+        }
+    </script>
+
+</body>
+</html>
