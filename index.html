@@ -55,7 +55,7 @@
                    dir="ltr">
         </div>
 
-        <!-- 2. Official Bot Commands (NEW SECTION) -->
+        <!-- 2. Official Bot Commands -->
         <div class="mb-8 p-6 bg-yellow-50 rounded-xl border border-yellow-200">
             <h2 class="text-xl font-bold text-gray-800 mb-4 flex justify-between items-center">
                 دستورات رسمی (نمایش در منوی ربات)
@@ -90,10 +90,15 @@
                     <input type="text" placeholder="پاسخ ربات (مثلا: سلام دوست من!)" value="سلام دوست عزیز! حالت چطوره؟" class="flex-1 px-3 py-2 border rounded-lg">
                     <button onclick="removeCommand(this)" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-3 rounded-lg text-sm transition flex-shrink-0">حذف</button>
                 </div>
+                <div class="flex flex-col sm:flex-row gap-2 bg-white p-3 rounded-lg shadow-sm">
+                    <input type="text" placeholder="متن ورودی (مثلا: /help)" value="/help" class="flex-1 px-3 py-2 border rounded-lg">
+                    <input type="text" placeholder="پاسخ ربات (مثلا: این ربات برای...)" value="برای راهنمایی کامل به من پیام بده!" class="flex-1 px-3 py-2 border rounded-lg">
+                    <button onclick="removeCommand(this)" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-3 rounded-lg text-sm transition flex-shrink-0">حذف</button>
+                </div>
             </div>
         </div>
 
-        <!-- 4. Button Commands -->
+        <!-- 4. Button Commands (UPDATED SECTION) -->
         <div class="mb-8 p-6 bg-gray-50 rounded-xl border border-gray-200">
             <h2 class="text-xl font-bold text-gray-800 mb-4 flex justify-between items-center">
                 دکمه‌های کیبورد (ارسال با فرمان /start)
@@ -101,12 +106,12 @@
                     + اضافه کردن دکمه
                 </button>
             </h2>
-            <p class="text-sm text-gray-500 mb-4">متن هر دکمه به عنوان یک پیام متنی به ربات ارسال می‌شود و پاسخ آن باید در بخش **"کلمات کلیدی و پاسخ‌های متنی"** تعریف شود.</p>
+            <p class="text-sm text-gray-500 mb-4">با ارسال فرمان **`/start`**، این دکمه‌ها نمایش داده می‌شوند. **پاسخ دکمه را در کادر دوم وارد کنید.**</p>
             <div id="buttonCommandsContainer" class="space-y-4">
                 <!-- Initial example button -->
                 <div class="flex flex-col sm:flex-row gap-2 bg-white p-3 rounded-lg shadow-sm">
                     <input type="text" placeholder="متن دکمه (مثلا: درباره ما)" value="درباره ما" class="flex-1 px-3 py-2 border rounded-lg">
-                    <input type="text" placeholder="توضیحات دکمه (برای ارجاع)" value="پاسخ به سوال درباره ربات" class="flex-1 px-3 py-2 border rounded-lg" disabled>
+                    <input type="text" placeholder="پاسخ ربات به کلیک دکمه" value="من یک ربات هستم که برای کمک به شما طراحی شده‌ام." class="flex-1 px-3 py-2 border rounded-lg">
                     <button onclick="removeCommand(this)" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-3 rounded-lg text-sm transition flex-shrink-0">حذف</button>
                 </div>
             </div>
@@ -136,7 +141,7 @@
     <script>
         const textCommandsContainer = document.getElementById('textCommandsContainer');
         const buttonCommandsContainer = document.getElementById('buttonCommandsContainer');
-        const botCommandsContainer = document.getElementById('botCommandsContainer'); // New container
+        const botCommandsContainer = document.getElementById('botCommandsContainer'); 
         const outputCode = document.getElementById('outputCode');
         const tokenInput = document.getElementById('tokenInput');
         const copyButton = document.getElementById('copyButton');
@@ -145,15 +150,14 @@
         let buttonIdCounter = 100;
 
         /** Creates and returns a new command row element. */
-        function createCommandRow(placeholder1, placeholder2, initialValue1 = '', initialValue2 = '', isBotCommand = false) {
+        function createCommandRow(placeholder1, placeholder2, initialValue1 = '') {
             const div = document.createElement('div');
             div.className = 'flex flex-col sm:flex-row gap-2 bg-white p-3 rounded-lg shadow-sm';
             
-            let input2Html = `<input type="text" placeholder="${placeholder2}" value="${initialValue2}" class="flex-1 px-3 py-2 border rounded-lg" ${!isBotCommand && placeholder2.includes('ارجاع') ? 'disabled' : ''}>`;
-
+            // Note: The second input is now always enabled for defining the response
             div.innerHTML = `
                 <input type="text" placeholder="${placeholder1}" value="${initialValue1}" class="flex-1 px-3 py-2 border rounded-lg">
-                ${input2Html}
+                <input type="text" placeholder="${placeholder2}" value="" class="flex-1 px-3 py-2 border rounded-lg">
                 <button onclick="removeCommand(this)" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-3 rounded-lg text-sm transition flex-shrink-0">حذف</button>
             `;
             return div;
@@ -161,7 +165,8 @@
 
         /** Adds a row to the Official Bot Commands section. */
         function addBotCommand() {
-            const row = createCommandRow('دستور (مثلا: /help)', 'توضیحات کوتاه برای منو', '', '', true);
+            // Bot Commands use the second input for Description
+            const row = createCommandRow('دستور (مثلا: /help)', 'توضیحات کوتاه برای منو', '');
             botCommandsContainer.appendChild(row);
         }
 
@@ -173,7 +178,8 @@
 
         /** Adds a row to the Button Commands section. */
         function addButtonCommand() {
-            const row = createCommandRow('متن دکمه (مثلا: ثبت سفارش)', 'توضیحات دکمه (برای ارجاع)');
+            // Button Commands use the second input for Response
+            const row = createCommandRow('متن دکمه (مثلا: ثبت سفارش)', 'پاسخ ربات به کلیک دکمه');
             buttonCommandsContainer.appendChild(row);
         }
 
@@ -182,12 +188,6 @@
             button.closest('.flex').remove();
         }
 
-        // --- Initialization ---
-        // Add initial default commands if containers are nearly empty
-        if (textCommandsContainer.children.length < 2) {
-            const initialText = createCommandRow('متن ورودی (مثلا: /help)', 'پاسخ ربات (مثلا: این ربات برای...)', '/help', 'برای راهنمایی کامل به من پیام بده!');
-            textCommandsContainer.appendChild(initialText);
-        }
 
         // --- Code Generation Logic ---
 
@@ -209,25 +209,25 @@
         function getKnownResponses() {
             const responses = {};
             
-            // 1. Text Responses
+            // 1. Text Responses (Section 3) - These are base responses
             textCommandsContainer.querySelectorAll('.flex').forEach(row => {
                 const inputs = row.querySelectorAll('input');
                 const input = inputs[0].value.trim();
                 const response = inputs[1].value.trim();
                 if (input && response) {
-                    // Ensure command/key is lowercased for dictionary key
                     responses[input.toLowerCase()] = response;
                 }
             });
 
-            // 2. Button Responses (The button text must also be in KNOWN_RESPONSES)
+            // 2. Button Responses (Section 4) - These override text responses if keys conflict
             buttonCommandsContainer.querySelectorAll('.flex').forEach(row => {
                 const inputs = row.querySelectorAll('input');
                 const buttonText = inputs[0].value.trim();
+                const buttonResponse = inputs[1].value.trim(); 
                 
-                // If button text is defined but not in responses, use a placeholder response
-                if (buttonText && !responses.hasOwnProperty(buttonText.toLowerCase())) {
-                    responses[buttonText.toLowerCase()] = `متأسفانه پاسخی برای "${buttonText}" پیدا نشد. لطفا /start را بزنید.`;
+                if (buttonText && buttonResponse) {
+                     // Button text acts as the key, overriding any text command with the same key
+                     responses[buttonText.toLowerCase()] = buttonResponse;
                 }
             });
 
@@ -332,6 +332,7 @@ def set_bot_commands():
     try:
         data = {"bot_commands": BOT_COMMANDS_LIST}
         url = f'{BASE_URL}/setCommands'
+        # requests.post به صورت خودکار داده‌های JSON را تبدیل می‌کند
         resp = requests.post(url, json=data, timeout=15)
         if resp.status_code == 200 and resp.json().get("status") == "ok":
             print("✅ دستورات رسمی با موفقیت تنظیم شدند.")
@@ -445,7 +446,8 @@ def main():
 
                 if key == "/start":
                     # ارسال پیام خوش آمدگویی به همراه کیبورد
-                    send_message(chat_id, KNOWN_RESPONSES.get(key, "سلام! به ربات خوش آمدید. لطفا یک گزینه را انتخاب کنید."), keypad_data=get_keypad_data())
+                    response_text = KNOWN_RESPONSES.get(key, "سلام! به ربات خوش آمدید. لطفا یک گزینه را انتخاب کنید.")
+                    send_message(chat_id, response_text, keypad_data=get_keypad_data())
                 elif key in KNOWN_RESPONSES:
                     # پاسخ به فرمان متنی، کلیک دکمه یا سایر دستورات رسمی
                     send_message(chat_id, KNOWN_RESPONSES[key])
