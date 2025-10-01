@@ -35,13 +35,13 @@
         <h1 class="text-3xl font-extrabold text-indigo-700 mb-2">ربات ساز روبیکا 🤖</h1>
         <p class="text-gray-600 mb-6">توکن ربات خود را وارد کنید و فرمان‌های متنی و دکمه‌ای را تعریف نمایید.</p>
 
-        <!-- Prerequisite Instruction (جدید) -->
+        <!-- Prerequisite Instruction -->
         <div class="mb-8 p-4 bg-red-50 rounded-lg border border-red-300 shadow-md">
             <p class="text-lg font-bold text-red-700 mb-2 flex items-center">
                 <svg class="w-6 h-6 ml-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.332 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                 🔴 نکته مهم: نصب پیش‌نیاز
             </p>
-            <p class="text-gray-700">برای اجرای کد پایتون نهایی، باید کتابخانه <code class="bg-red-100 px-1 py-0.5 rounded text-red-800 font-semibold">requests</code> را در محیط پایتون خود نصب کنید. دستور زیر را در **ترمینال** یا **CMD** وارد نمایید:</p>
+            <p class="text-gray-700">برای اجرای کد پایتون نهایی، باید کتابخانه <code class="bg-red-100 px-1 py-0.5 rounded text-red-800 font-semibold">requests</code> را در محیط پایتون خود نصب کنید:</p>
             <div class="mt-3 bg-gray-900 p-3 rounded-lg text-left text-base font-mono overflow-x-auto shadow-inner">
                 <span class="text-green-400">pip install requests</span>
             </div>
@@ -55,25 +55,45 @@
                    dir="ltr">
         </div>
 
-        <!-- 2. Text Commands -->
-        <div class="mb-8 p-6 bg-gray-50 rounded-xl border border-gray-200">
+        <!-- 2. Official Bot Commands (NEW SECTION) -->
+        <div class="mb-8 p-6 bg-yellow-50 rounded-xl border border-yellow-200">
             <h2 class="text-xl font-bold text-gray-800 mb-4 flex justify-between items-center">
-                فرمان‌های متنی (مثال: سلام، چه خبر)
-                <button onclick="addTextCommand()" class="bg-green-500 hover:bg-green-600 text-white font-semibold py-1 px-3 rounded-full text-sm transition shadow-md">
-                    + اضافه کردن فرمان
+                دستورات رسمی (نمایش در منوی ربات)
+                <button onclick="addBotCommand()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-1 px-3 rounded-full text-sm transition shadow-md">
+                    + اضافه کردن دستور
                 </button>
             </h2>
-            <div id="textCommandsContainer" class="space-y-4">
-                <!-- Initial example commands -->
+            <p class="text-sm text-gray-500 mb-4">این دستورات با استفاده از متد <code class="bg-yellow-100 px-1 py-0.5 rounded text-yellow-800 font-semibold">setCommands</code> به روبیکا ارسال می‌شوند و باید با <code class="bg-yellow-100 px-1 py-0.5 rounded text-yellow-800 font-semibold">/</code> شروع شوند.</p>
+            <div id="botCommandsContainer" class="space-y-4">
+                <!-- Initial example command (start) -->
                 <div class="flex flex-col sm:flex-row gap-2 bg-white p-3 rounded-lg shadow-sm">
-                    <input type="text" placeholder="متن ورودی (مثلا: سلام)" value="سلام" class="flex-1 px-3 py-2 border rounded-lg">
-                    <input type="text" placeholder="پاسخ ربات (مثلا: سلام دوست من!)" value="سلام دوست عزیز! حالت چطوره؟" class="flex-1 px-3 py-2 border rounded-lg">
-                    <button onclick="removeCommand(this)" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-3 rounded-lg text-sm transition">حذف</button>
+                    <input type="text" data-type="command" placeholder="دستور (مثلا: /start)" value="/start" class="flex-1 px-3 py-2 border rounded-lg">
+                    <input type="text" data-type="description" placeholder="توضیحات کوتاه برای منو (مثلا: شروع مجدد ربات)" value="شروع کار با ربات و نمایش کیبورد" class="flex-1 px-3 py-2 border rounded-lg">
+                    <button onclick="removeCommand(this)" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-3 rounded-lg text-sm transition flex-shrink-0">حذف</button>
                 </div>
             </div>
         </div>
 
-        <!-- 3. Button Commands -->
+        <!-- 3. Text Keywords and Responses -->
+        <div class="mb-8 p-6 bg-gray-50 rounded-xl border border-gray-200">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex justify-between items-center">
+                کلمات کلیدی و پاسخ‌های متنی (شامل دستورات رسمی)
+                <button onclick="addTextCommand()" class="bg-green-500 hover:bg-green-600 text-white font-semibold py-1 px-3 rounded-full text-sm transition shadow-md">
+                    + اضافه کردن کلمه کلیدی
+                </button>
+            </h2>
+            <p class="text-sm text-gray-500 mb-4">هر پیامی که ربات دریافت کند (از جمله دستورات رسمی)، ابتدا در این لیست برای یافتن پاسخ جستجو می‌شود.</p>
+            <div id="textCommandsContainer" class="space-y-4">
+                <!-- Initial example commands -->
+                <div class="flex flex-col sm:flex-row gap-2 bg-white p-3 rounded-lg shadow-sm">
+                    <input type="text" placeholder="متن ورودی (مثلا: سلام یا /help)" value="سلام" class="flex-1 px-3 py-2 border rounded-lg">
+                    <input type="text" placeholder="پاسخ ربات (مثلا: سلام دوست من!)" value="سلام دوست عزیز! حالت چطوره؟" class="flex-1 px-3 py-2 border rounded-lg">
+                    <button onclick="removeCommand(this)" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-3 rounded-lg text-sm transition flex-shrink-0">حذف</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Button Commands -->
         <div class="mb-8 p-6 bg-gray-50 rounded-xl border border-gray-200">
             <h2 class="text-xl font-bold text-gray-800 mb-4 flex justify-between items-center">
                 دکمه‌های کیبورد (ارسال با فرمان /start)
@@ -81,18 +101,18 @@
                     + اضافه کردن دکمه
                 </button>
             </h2>
-            <p class="text-sm text-gray-500 mb-4">با ارسال فرمان **`/start`**، این دکمه‌ها برای کاربر نمایش داده می‌شوند. هر دکمه، متن خود را به‌عنوان یک پیام به ربات ارسال می‌کند و پاسخ آن از طریق "پاسخ ربات" ارسال می‌شود.</p>
+            <p class="text-sm text-gray-500 mb-4">متن هر دکمه به عنوان یک پیام متنی به ربات ارسال می‌شود و پاسخ آن باید در بخش **"کلمات کلیدی و پاسخ‌های متنی"** تعریف شود.</p>
             <div id="buttonCommandsContainer" class="space-y-4">
                 <!-- Initial example button -->
                 <div class="flex flex-col sm:flex-row gap-2 bg-white p-3 rounded-lg shadow-sm">
                     <input type="text" placeholder="متن دکمه (مثلا: درباره ما)" value="درباره ما" class="flex-1 px-3 py-2 border rounded-lg">
-                    <input type="text" placeholder="پاسخ ربات به کلیک دکمه" value="من یک ربات هستم که برای کمک به شما طراحی شده‌ام." class="flex-1 px-3 py-2 border rounded-lg">
-                    <button onclick="removeCommand(this)" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-3 rounded-lg text-sm transition">حذف</button>
+                    <input type="text" placeholder="توضیحات دکمه (برای ارجاع)" value="پاسخ به سوال درباره ربات" class="flex-1 px-3 py-2 border rounded-lg" disabled>
+                    <button onclick="removeCommand(this)" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-3 rounded-lg text-sm transition flex-shrink-0">حذف</button>
                 </div>
             </div>
         </div>
 
-        <!-- 4. Generator and Output -->
+        <!-- 5. Generator and Output -->
         <div class="text-center mb-6">
             <button onclick="generateCode()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xl font-bold py-3 px-8 rounded-xl shadow-lg transition duration-300 transform hover:scale-105">
                 تولید کد پایتون
@@ -116,35 +136,44 @@
     <script>
         const textCommandsContainer = document.getElementById('textCommandsContainer');
         const buttonCommandsContainer = document.getElementById('buttonCommandsContainer');
+        const botCommandsContainer = document.getElementById('botCommandsContainer'); // New container
         const outputCode = document.getElementById('outputCode');
         const tokenInput = document.getElementById('tokenInput');
         const copyButton = document.getElementById('copyButton');
 
         // --- Utility Functions for UI ---
-
         let buttonIdCounter = 100;
 
         /** Creates and returns a new command row element. */
-        function createCommandRow(placeholder1, placeholder2, initialValue1 = '', initialValue2 = '') {
+        function createCommandRow(placeholder1, placeholder2, initialValue1 = '', initialValue2 = '', isBotCommand = false) {
             const div = document.createElement('div');
             div.className = 'flex flex-col sm:flex-row gap-2 bg-white p-3 rounded-lg shadow-sm';
+            
+            let input2Html = `<input type="text" placeholder="${placeholder2}" value="${initialValue2}" class="flex-1 px-3 py-2 border rounded-lg" ${!isBotCommand && placeholder2.includes('ارجاع') ? 'disabled' : ''}>`;
+
             div.innerHTML = `
                 <input type="text" placeholder="${placeholder1}" value="${initialValue1}" class="flex-1 px-3 py-2 border rounded-lg">
-                <input type="text" placeholder="${placeholder2}" value="${initialValue2}" class="flex-1 px-3 py-2 border rounded-lg">
+                ${input2Html}
                 <button onclick="removeCommand(this)" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-3 rounded-lg text-sm transition flex-shrink-0">حذف</button>
             `;
             return div;
         }
 
-        /** Adds a row to the Text Commands section. */
+        /** Adds a row to the Official Bot Commands section. */
+        function addBotCommand() {
+            const row = createCommandRow('دستور (مثلا: /help)', 'توضیحات کوتاه برای منو', '', '', true);
+            botCommandsContainer.appendChild(row);
+        }
+
+        /** Adds a row to the Text Keywords and Responses section. */
         function addTextCommand() {
-            const row = createCommandRow('متن ورودی (مثلا: سلام)', 'پاسخ ربات (مثلا: سلام دوست من!)');
+            const row = createCommandRow('متن ورودی (مثلا: سلام یا /help)', 'پاسخ ربات (مثلا: سلام دوست من!)');
             textCommandsContainer.appendChild(row);
         }
 
         /** Adds a row to the Button Commands section. */
         function addButtonCommand() {
-            const row = createCommandRow('متن دکمه (مثلا: ثبت سفارش)', 'پاسخ ربات به کلیک دکمه');
+            const row = createCommandRow('متن دکمه (مثلا: ثبت سفارش)', 'توضیحات دکمه (برای ارجاع)');
             buttonCommandsContainer.appendChild(row);
         }
 
@@ -153,62 +182,97 @@
             button.closest('.flex').remove();
         }
 
-        // Initialize with default commands if containers are empty (for testing)
-        if (textCommandsContainer.children.length === 0) {
-            addTextCommand();
+        // --- Initialization ---
+        // Add initial default commands if containers are nearly empty
+        if (textCommandsContainer.children.length < 2) {
+            const initialText = createCommandRow('متن ورودی (مثلا: /help)', 'پاسخ ربات (مثلا: این ربات برای...)', '/help', 'برای راهنمایی کامل به من پیام بده!');
+            textCommandsContainer.appendChild(initialText);
         }
-        if (buttonCommandsContainer.children.length === 0) {
-            addButtonCommand();
-        }
-
 
         // --- Code Generation Logic ---
 
-        /** Generates the Python code string. */
-        function generatePythonCode(token) {
-            const textCommands = [];
+        function getBotCommands() {
+            const commands = [];
+            botCommandsContainer.querySelectorAll('.flex').forEach(row => {
+                const inputs = row.querySelectorAll('input');
+                const command = inputs[0].value.trim();
+                const description = inputs[1].value.trim();
+
+                // Only include commands starting with /
+                if (command.startsWith('/') && description) {
+                    commands.push({ command: command.toLowerCase(), description });
+                }
+            });
+            return commands;
+        }
+
+        function getKnownResponses() {
+            const responses = {};
+            
+            // 1. Text Responses
             textCommandsContainer.querySelectorAll('.flex').forEach(row => {
                 const inputs = row.querySelectorAll('input');
                 const input = inputs[0].value.trim();
                 const response = inputs[1].value.trim();
                 if (input && response) {
-                    textCommands.push({ input: input.toLowerCase(), response });
+                    // Ensure command/key is lowercased for dictionary key
+                    responses[input.toLowerCase()] = response;
                 }
             });
 
-            const buttonCommands = [];
+            // 2. Button Responses (The button text must also be in KNOWN_RESPONSES)
             buttonCommandsContainer.querySelectorAll('.flex').forEach(row => {
                 const inputs = row.querySelectorAll('input');
-                const text = inputs[0].value.trim();
-                const response = inputs[1].value.trim();
-                if (text && response) {
-                    buttonCommands.push({ text, response });
+                const buttonText = inputs[0].value.trim();
+                
+                // If button text is defined but not in responses, use a placeholder response
+                if (buttonText && !responses.hasOwnProperty(buttonText.toLowerCase())) {
+                    responses[buttonText.toLowerCase()] = `متأسفانه پاسخی برای "${buttonText}" پیدا نشد. لطفا /start را بزنید.`;
                 }
             });
 
-            // Combine text and button responses into one dict
-            const allResponses = {};
-            textCommands.forEach(cmd => {
-                allResponses[cmd.input] = cmd.response;
-            });
-            buttonCommands.forEach(cmd => {
-                // Button text acts as the command key
-                allResponses[cmd.text.toLowerCase()] = cmd.response;
-            });
+            // Ensure /start has a default response if not explicitly set
+            if (!responses.hasOwnProperty('/start')) {
+                 responses['/start'] = 'سلام! به ربات ساز خوش آمدید. لطفا یک گزینه را انتخاب کنید.';
+            }
 
-            // Format KNOWN_RESPONSES string for Python
+            return responses;
+        }
+
+
+        /** Generates the Python code string. */
+        function generatePythonCode(token) {
+            const allResponses = getKnownResponses();
+            const botCommands = getBotCommands();
+            
+            // --- 1. Format KNOWN_RESPONSES string for Python ---
             let responsesCode = '';
             for (const [key, value] of Object.entries(allResponses)) {
-                // Escape quotes in values for Python string literal
                 const safeValue = value.replace(/"/g, '\\"');
                 responsesCode += `\t"${key}": "${safeValue}",\n`;
             }
 
-            // Format Keypad structure for Python
+            // --- 2. Format Bot Commands list for Python ---
+            let botCommandsCode = '[\n';
+            botCommands.forEach(cmd => {
+                const safeDescription = cmd.description.replace(/"/g, '\\"');
+                botCommandsCode += `\t\t{\n\t\t\t"command": "${cmd.command}",\n\t\t\t"description": "${safeDescription}"\n\t\t},\n`;
+            });
+            botCommandsCode += '\t]';
+
+            // --- 3. Format Keypad structure for Python ---
             let keypadRowsCode = '';
             buttonIdCounter = 100; // Reset counter
+            const buttonCommands = [];
+            buttonCommandsContainer.querySelectorAll('.flex').forEach(row => {
+                 const inputs = row.querySelectorAll('input');
+                 const text = inputs[0].value.trim();
+                 if (text) {
+                     buttonCommands.push({ text });
+                 }
+            });
+
             if (buttonCommands.length > 0) {
-                // Group buttons into rows of 1 or 2 for simple demonstration
                 const rows = [];
                 for (let i = 0; i < buttonCommands.length; i += 2) {
                     const rowButtons = buttonCommands.slice(i, i + 2);
@@ -231,7 +295,9 @@
 
 
             const pythonCode = `
+# --------------------------------------------------------------------------------
 # توجه: برای اجرای این کد، باید کتابخانه requests را نصب کنید: pip install requests
+# --------------------------------------------------------------------------------
 import requests
 import time
 import random
@@ -253,6 +319,26 @@ RANDOM_RESPONSES = ["اها", "عجب", "بله", "اوم", "ممنون"]
 KNOWN_RESPONSES = {
 ${responsesCode}\
 }
+
+# --- بخش دستورات رسمی (برای نمایش در منو) ---
+BOT_COMMANDS_LIST = ${botCommandsCode}
+
+def set_bot_commands():
+    """ارسال لیست دستورات رسمی به سرور روبیکا برای نمایش در منو."""
+    if not BOT_COMMANDS_LIST:
+        print("لیست دستورات رسمی خالی است. متد setCommands اجرا نشد.")
+        return
+
+    try:
+        data = {"bot_commands": BOT_COMMANDS_LIST}
+        url = f'{BASE_URL}/setCommands'
+        resp = requests.post(url, json=data, timeout=15)
+        if resp.status_code == 200 and resp.json().get("status") == "ok":
+            print("✅ دستورات رسمی با موفقیت تنظیم شدند.")
+        else:
+            print(f"❌ خطا در تنظیم دستورات رسمی: {resp.text}")
+    except Exception as e:
+        print(f"❌ خطا در اتصال برای setCommands: {e}")
 
 # --- بخش کیبورد ---
 def get_keypad_data():
@@ -323,6 +409,10 @@ def send_message(chat_id, text, keypad_data=None):
 
 def main():
     global offset_id
+    
+    # تنظیم دستورات رسمی یک بار قبل از شروع حلقه اصلی
+    set_bot_commands()
+    
     print("ربات فعال شد! در حال گوش دادن به پیام‌ها...")
 
     while True:
@@ -338,7 +428,6 @@ def main():
             if u.get("type") == "NewMessage":
                 chat_id = u.get("chat_id")
                 text = u.get("new_message", {}).get("text", "")
-            # تشخیص پیام‌های دکمه‌ای (در صورت وجود inline_message) - اگرچه در API شما نیامده، برای جلوگیری از خطا اضافه شده است.
             elif "inline_message" in u:
                 im = u["inline_message"]
                 chat_id = im.get("chat_id")
@@ -356,9 +445,9 @@ def main():
 
                 if key == "/start":
                     # ارسال پیام خوش آمدگویی به همراه کیبورد
-                    send_message(chat_id, "سلام! به ربات خوش آمدید. لطفا یک گزینه را انتخاب کنید.", keypad_data=get_keypad_data())
+                    send_message(chat_id, KNOWN_RESPONSES.get(key, "سلام! به ربات خوش آمدید. لطفا یک گزینه را انتخاب کنید."), keypad_data=get_keypad_data())
                 elif key in KNOWN_RESPONSES:
-                    # پاسخ به فرمان متنی یا کلیک دکمه (که متن دکمه را ارسال می‌کند)
+                    # پاسخ به فرمان متنی، کلیک دکمه یا سایر دستورات رسمی
                     send_message(chat_id, KNOWN_RESPONSES[key])
                 else:
                     # پاسخ تصادفی برای پیام‌های ناشناخته
@@ -397,12 +486,9 @@ if __name__ == "__main__":
             outputCode.select();
             outputCode.setSelectionRange(0, 99999); // For mobile devices
 
-            // Use document.execCommand('copy') for compatibility in iframe environments
             try {
                 const successful = document.execCommand('copy');
-                const msg = successful ? 'کد با موفقیت کپی شد!' : 'عملیات کپی شکست خورد.';
                 
-                // Simple visual feedback
                 const originalText = copyButton.innerText;
                 copyButton.innerText = 'کپی شد!';
                 copyButton.classList.remove('bg-yellow-500', 'hover:bg-yellow-600');
@@ -415,8 +501,6 @@ if __name__ == "__main__":
                 }, 2000);
             } catch (err) {
                 console.error('Fallback: Could not copy text: ', err);
-                // Display custom message box instead of alert
-                // (Since custom message box logic is not provided, we stick to the required document.execCommand logic)
             }
         }
     </script>
